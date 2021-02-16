@@ -1,2 +1,3 @@
 # ppds
-A repository for course Parallel Programming and Distributed Systems (PPDS)
+
+Repository for course Parallel Programming and Distributed Systems
