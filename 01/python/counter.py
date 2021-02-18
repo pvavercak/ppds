@@ -24,7 +24,8 @@ def counter1(shared):
         if shared.counter >= shared.end:
             break
         shared.mutex.lock()
-        shared.array[shared.counter] += 1
+        if shared.counter < shared.end:
+            shared.array[shared.counter] += 1
         shared.counter += 1
         shared.mutex.unlock()
 

@@ -28,7 +28,9 @@ void counter1(Shared *shared) {
         if (shared->counter >= shared->end)
             break;
         shared->mtx.lock();
-        ++shared->array[shared->counter];
+        if (shared->counter < shared->end) {
+            ++shared->array[shared->counter];
+        }
         ++shared->counter;
         shared->mtx.unlock();
     }
