@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <chrono>
+#include <fstream>
 
 
 using namespace std;
@@ -83,32 +84,56 @@ void print_histogram(const vector<T> &array) {
 
 
 int main(int argc, char** argv) {
-    int array_size{1000000};
-    int cycles{5};
+    ofstream out_csv{"report.csv"};
 
-    vector<void(*)(Shared*)> counter_functions(0);
-    counter_functions.push_back(counter1);
-    counter_functions.push_back(counter2);
-    counter_functions.push_back(counter3);
-
-    for(auto& cntr : counter_functions) {
-        int sum = 0;
-        for(int i = 0; i < cycles; ++i) {
-            Shared s(array_size);
-            auto start = chrono::high_resolution_clock::now();
-
-            thread t1(cntr, &s);
-            thread t2(cntr, &s);
-            t1.join();
-            t2.join();
-
-            auto end = chrono::high_resolution_clock::now();
-            sum += chrono::duration_cast<chrono::milliseconds>(end - start).count();
-
-            print_histogram(s.array);
-        }
-        cout << "Average duration [ms]: " << static_cast<int>(sum / cycles) << endl;
+    if (!out_csv) {
+        std::cout << "Problem opening output file" << endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    out_csv << "threads;time_counter1;time_counter2;time_counter3" << endl;
+
+    int array_size{10000000};
+    int cycles{10};
+
+    vector<void(*)(Shared*)> counter_functions({
+        counter1, counter2, counter3});
+
+    for(int thread_count = 1; thread_count <= 128; thread_count*=2) {
+        out_csv << thread_count << ";";
+        for(int fnc = 0; fnc < counter_functions.size(); ++fnc) {
+            int sum_of_times = 0;
+            for(int i = 0; i < cycles; ++i) {
+                Shared s(array_size);
+                vector<thread> threads;
+                auto start = chrono::high_resolution_clock::now();
+
+                for(int th = 0; th < thread_count; ++th) {
+                    threads.push_back(thread(counter_functions[fnc], &s));
+                }
+
+                for(thread& th : threads) {
+                    if (th.joinable()) {
+                        th.join();
+                    }
+                }
+
+                auto end = chrono::high_resolution_clock::now();
+
+                sum_of_times += 
+                    chrono::duration_cast<chrono::milliseconds>(
+                        end - start
+                    ).count();
+            }
+            out_csv << static_cast<int>(sum_of_times / cycles);
+            if (fnc != counter_functions.size() - 1) {
+                out_csv << ";";
+            }
+        }
+        out_csv << endl;
+    }
+
+    out_csv.close();
+
+    return EXIT_SUCCESS;
 }
