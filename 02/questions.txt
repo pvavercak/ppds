@@ -1,0 +1,24 @@
+Odpoveď na otázky na zamyslenie
+
+1. Aký je najmenší počet synchronizačných objektov na riešenie fibonacci úlohy?
+ - Na vyriešenie tejto úlohy mi stačil jednoduchý spinlock,
+   takže ak je podmienkou pre správne riešenie použitie vlákien, tak stačí 1 Mutex
+ - Samozrejme, túto úlohu je lepšie riešiť bez použitia vlákien
+
+2. Ktoré z prebratých synchronizačných vzorov sa dajú (rozumne) využiť pri riešení tejto úlohy? 
+ - Najmenej umelé riešenie som dosiahol použitím jediného mutexu a to tak, že:
+   - vo while cykle som si uzamkol oblasť, kde do lokálnej premennej index načítavam poradie prvku
+     z fibonacciho postupnosti, ktorý má vlákno za úlohu vypočítať, čiže thread_id + 2
+   - potom som mimo uzamknutia kontroloval, či sa v poli s fibonacciho postupnosťou nachádza toľko prvkov,
+     aby bolo možné spraviť výpočet prvok(index - 2) + prvok(index - 1)
+   - ak sa dá daný prvok vypočítať, tak ho vypočítam a pridám do fibonacci poľa
+
+ - Druhé riešenie spočívalo v tom, že som mal ku každému vláknu jeho vlastný Semaphore/Event objektov
+   - Toto riešenie je dobré v tom, že sa dá ľahko vymeniť Semaphore za Event
+   - Princíp toho, ako riešenie funguje je nasledovný:
+     - vytvorím pole Semaphore/Event objektov rovnakej veľkosti, ako pole Thread objektov
+     - ošetrujem if podmienkou situáciu, aby nečakalo prvé vlákno, pretože to by spôsobovalo deadlock,
+       navyše prvé vlákno má vždy zaručené, že môže vykonať výpočet
+     - následne, keď vlákno prejde podmienkou a nemusí čakať, prichádza k samotnému výpočtu a pridaniu výsledku do poľa fibonacci
+     - keď vlákno pridá prvok do poľa, odomkne svoj Semaphore/Event objekt, čím signalizuje, že už splnilo svoj účel
+     - môže ísť vlákno, ktoré je zastavené na synchronizačnom objekte toho vlákna, ktoré práve dopočítalo
