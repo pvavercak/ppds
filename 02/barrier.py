@@ -21,6 +21,24 @@ class SimpleBarrier:
         self.turnstile.wait()
 
 
+class SimpleBarrierEvent:
+    def __init__(self, num_of_threads):
+        self.N = num_of_threads
+        self.C = num_of_threads
+        self.mutex = Mutex()
+        self.turnstile = Event()
+
+    def wait(self):
+        self.mutex.lock()
+        if self.C == 0:
+            self.turnstile.clear()
+            self.C += 1
+            if self.C == self.N:
+                self.turnstile.set()
+        self.mutex.unlock()
+        self.turnstile.wait()
+
+
 def simple_barrier_example(barrier, thread_id):
     sleep(randint(1,10)/10)
     print("vlakno %d pred barierou" % thread_id)
