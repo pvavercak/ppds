@@ -8,6 +8,7 @@ class WareHouse:
         self.free_space = Semaphore(capacity)
         self.items = Semaphore(0)
         self.mutex = Mutex()
+        self.produced = 0
 
 
 def producer(warehouse, time_to_produce, time_to_store):
@@ -15,6 +16,7 @@ def producer(warehouse, time_to_produce, time_to_store):
     warehouse.free_space.wait()
     warehouse.mutex.lock()
     sleep(time_to_store)
+    warehouse.produced += 1
     warehouse.mutex.unlock()
     warehouse.items.signal()
 
