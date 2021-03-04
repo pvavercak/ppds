@@ -9,25 +9,32 @@ class WareHouse:
         self.items = Semaphore(0)
         self.mutex = Mutex()
         self.produced = 0
+        self.closed = False
 
 
 def producer(warehouse, time_to_produce, time_to_store):
-    sleep(time_to_produce)
-    warehouse.free_space.wait()
-    warehouse.mutex.lock()
-    sleep(time_to_store)
-    warehouse.produced += 1
-    warehouse.mutex.unlock()
-    warehouse.items.signal()
+    while True:
+        sleep(time_to_produce)
+        warehouse.free_space.wait()
+        warehouse.mutex.lock()
+        sleep(time_to_store)
+        warehouse.produced += 1
+        warehouse.mutex.unlock()
+        warehouse.items.signal()
+        if warehouse.closed:
+            break
 
 
 def consumer(warehouse, time_to_gain):
-    warehouse.items.wait()
-    warehouse.mutex.lock()
-    sleep(time_to_gain)
-    warehouse.mutex.unlock()
-    warehouse.free_space.signal()
-    sleep(randint(1, 10) / 500)
+    while True:
+        warehouse.items.wait()
+        warehouse.mutex.lock()
+        sleep(time_to_gain)
+        warehouse.mutex.unlock()
+        warehouse.free_space.signal()
+        sleep(randint(1, 10) / 500)
+        if warehouse.closed:
+            break
 
 
 def producer_consumer_benchmark():
@@ -39,6 +46,7 @@ def producer_consumer_benchmark():
 
     wait = 0.5
     sleep(wait)
+    warehouse.closed = True
     warehouse.items.signal(100)
     warehouse.free_space.signal(100)
     for thread in consumers + producers:
