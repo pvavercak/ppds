@@ -64,7 +64,7 @@ def consumer(warehouse, time_to_gain):
             break
 
 
-def producer_consumer_benchmark(repetitions, service_time):
+def producer_benchmark(repetitions, service_time):
     keys = ["production_times", "producers_count", "produced_items"]
     data = {keys[0]: [], keys[1]: [], keys[2]: []}
     for t_production in range(1, 5):
