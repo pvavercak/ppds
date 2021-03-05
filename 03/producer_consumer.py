@@ -94,3 +94,28 @@ def producer_benchmark(repetitions, service_time):
             data[keys[2]].append(produced_per_sec)
     save_to_pickle(data)
     return data
+
+
+def consumer_benchmark(repetitions, service_time):
+    keys = ["consumption_time", "consumers_count", "consumed_items"]
+    data = {keys[0]: [], keys[1]: [], keys[2]: []}
+    for t_consumption in range(1, 5):
+        for n_consumers in range(1, 5):
+            partial_sum = 0
+            consume_time = t_consumption / 100
+            for _ in range(repetitions):
+                warehouse = WareHouse(10)
+                consumers = [Thread(consumer, warehouse, consume_time)
+                             for _ in range(n_consumers)]
+                producers = [
+                    Thread(producer, warehouse, 0.05, 0.01)
+                    for _ in range(10)]
+                warehouse.stop_production(service_time)
+                [thread.join() for thread in consumers + producers]
+                partial_sum += warehouse.consumed / service_time
+            consumed_per_sec = partial_sum / repetitions
+            data[keys[0]].append(consume_time)
+            data[keys[1]].append(n_consumers)
+            data[keys[2]].append(consumed_per_sec)
+    save_to_pickle(data)
+    return data
