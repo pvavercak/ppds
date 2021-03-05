@@ -74,8 +74,8 @@ def consumer(warehouse, time_to_consume):
 def producer_benchmark(repetitions, service_time):
     keys = ["production_times", "producers_count", "produced_items"]
     data = {keys[0]: [], keys[1]: [], keys[2]: []}
-    for t_production in range(1, 5):
-        for n_producers in range(1, 5):
+    for t_production in range(1, 11):
+        for n_producers in range(1, 11):
             partial_sum = 0
             production_time = t_production / 100
             for _ in range(repetitions):
@@ -99,8 +99,8 @@ def producer_benchmark(repetitions, service_time):
 def consumer_benchmark(repetitions, service_time):
     keys = ["consumption_time", "consumers_count", "consumed_items"]
     data = {keys[0]: [], keys[1]: [], keys[2]: []}
-    for t_consumption in range(1, 5):
-        for n_consumers in range(1, 5):
+    for t_consumption in range(1, 11):
+        for n_consumers in range(1, 11):
             partial_sum = 0
             consume_time = t_consumption / 100
             for _ in range(repetitions):
