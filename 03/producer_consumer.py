@@ -25,12 +25,19 @@ class WareHouse:
         self.items = Semaphore(0)
         self.mutex = Mutex()
         self.produced = 0
+        self.consumed = 0
         self.closed = False
 
     def produce(self, time_to_produce):
         sleep(time_to_produce)
         self.mutex.lock()
         self.produced += 1
+        self.mutex.unlock()
+
+    def consume(self, time_to_consume):
+        sleep(time_to_consume)
+        self.mutex.lock()
+        self.consumed += 1
         self.mutex.unlock()
 
     def stop_production(self, time_period):
@@ -52,14 +59,14 @@ def producer(warehouse, time_to_produce, time_to_store):
             break
 
 
-def consumer(warehouse, time_to_gain):
+def consumer(warehouse, time_to_consume):
     while True:
         warehouse.items.wait()
         warehouse.mutex.lock()
-        sleep(time_to_gain)
+        sleep(randint(1, 10) / 500)
         warehouse.mutex.unlock()
         warehouse.free_space.signal()
-        sleep(randint(1, 10) / 500)
+        warehouse.consume(time_to_consume)
         if warehouse.closed:
             break
 
