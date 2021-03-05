@@ -11,14 +11,19 @@ class WareHouse:
         self.produced = 0
         self.closed = False
 
+    def produce(self, time_to_produce):
+        sleep(time_to_produce)
+        self.mutex.lock()
+        self.produced += 1
+        self.mutex.unlock()
+
 
 def producer(warehouse, time_to_produce, time_to_store):
     while True:
-        sleep(time_to_produce)
+        warehouse.produce(time_to_produce)
         warehouse.free_space.wait()
         warehouse.mutex.lock()
         sleep(time_to_store)
-        warehouse.produced += 1
         warehouse.mutex.unlock()
         warehouse.items.signal()
         if warehouse.closed:
