@@ -12,13 +12,6 @@ def save_to_pickle(results):
         pickle.dump(results, file_handle)
 
 
-def load_from_pickle(pickle_file):
-    results = dict()
-    with open(pickle_file, "rb") as file_handle:
-        results = pickle.load(file_handle)
-    return results
-
-
 class WareHouse:
     def __init__(self, capacity):
         self.free_space = Semaphore(capacity)
