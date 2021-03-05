@@ -1,6 +1,22 @@
 from fei.ppds import Mutex, Semaphore, Thread
 from time import sleep
+from time import time as timestamp
 from random import randint
+import pickle
+
+
+def save_to_pickle(results):
+    tstmp = str(timestamp()).replace('.', '-')
+    unique_filename = f"results-{tstmp}.pickle"
+    with open(unique_filename, "wb") as file_handle:
+        pickle.dump(results, file_handle)
+
+
+def load_from_pickle(pickle_file):
+    results = dict()
+    with open(pickle_file, "rb") as file_handle:
+        results = pickle.load(file_handle)
+    return results
 
 
 class WareHouse:
@@ -69,4 +85,5 @@ def producer_consumer_benchmark(repetitions, service_time):
             data[keys[0]].append(production_time)
             data[keys[1]].append(n_producers)
             data[keys[2]].append(produced_per_sec)
+    save_to_pickle(data)
     return data
