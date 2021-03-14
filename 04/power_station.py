@@ -11,10 +11,19 @@ class LightSwitch:
         self.mutex = Mutex()
 
     def lock(self, sem):
-        pass
+        self.mutex.lock()
+        self.cnt += 1
+        if self.cnt == 1:
+            sem.wait()
+        self.mutex.unlock()
+        return self.cnt
 
     def unlock(self, sem):
-        pass
+        self.mutex.lock()
+        self.cnt -= 1
+        if self.cnt == 0:
+            sem.signal()
+        self.mutex.unlock()
 
 
 def sensor(id):
