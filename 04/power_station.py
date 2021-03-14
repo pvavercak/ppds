@@ -35,7 +35,8 @@ def sensor(id, update_time: Callable[[], float], data_present,
         block_sensors.wait()
         update = update_time()
         print(
-            f'cidlo {id}: pocet_zapisujucich_cidiel={sensor_count}, trvanie_zapisu={update}')
+            f'cidlo "{id:02}": pocet_zapisujucich_cidiel='
+            f'{sensor_count:02}, trvanie_zapisu={update:02}')
         sleep(update / 1000)
         block_sensors.signal()
         sensor_ls.unlock(block_monitors)
@@ -51,7 +52,8 @@ def monitor(id, data_present, monitor_ls, block_sensors, block_monitors):
         block_monitors.signal()
         read_time = randint(40, 50)
         print(
-            f'monit {id}: pocet_citajucich_monitorov={monitor_count}, trvanie_citania={read_time}')
+            f'monit "{id:02}": pocet_citajucich_monitorov='
+            f'{monitor_count:02}, trvanie_citania={read_time:02}')
         sleep(read_time / 1000)
         monitor_ls.unlock(block_sensors)
 
