@@ -43,8 +43,17 @@ def sensor(id, update_time: Callable[[], float], data_present,
         sleep(randint(50, 60) / 1000)
 
 
-def monitor(id):
-    pass
+def monitor(id, data_present, monitor_ls, block_sensors, block_monitors):
+    data_present.wait()
+    while True:
+        block_monitors.wait()
+        monitor_count = monitor_ls.lock(block_sensors)
+        block_monitors.signal()
+        read_time = randint(40, 50)
+        print(
+            f'monit {id}: pocet_citajucich_monitorov={monitor_count}, trvanie_citania={read_time}')
+        sleep(read_time / 1000)
+        monitor_ls.unlock(block_sensors)
 
 
 data_present = Event()
@@ -64,6 +73,9 @@ sensors.append(
            data_present, sensor_ls,
            block_sensors, block_monitors))
 
-monitors = [Thread(monitor, monitor_id) for monitor_id in range(N_MONITORS)]
+monitors = [
+    Thread(monitor, monitor_id, data_present, monitor_ls,
+           block_sensors, block_monitors)
+    for monitor_id in range(N_MONITORS)]
 
 [thread.join() for thread in sensors + monitors]
