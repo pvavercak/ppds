@@ -63,3 +63,13 @@ def cook(shared):
 
 def run():
     N_SAVAGES = 5
+
+    shared = Shared(N_SAVAGES)
+
+    thread_pool = [Thread(savage, i, shared) for i in range(N_SAVAGES)]
+    thread_pool.append(Thread(cook, shared))
+
+    [th.join() for th in thread_pool]
+
+
+run()
