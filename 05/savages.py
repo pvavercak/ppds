@@ -27,24 +27,24 @@ class SimpleBarrier:
 
 
 class Shared():
-    def __init__(self, N=5):
+    def __init__(self, n_savages=5):
         self.servings = 0
         self.mutex = Mutex()
-        self.SERVINGS_NEEDED = N
+        self.SERVINGS_NEEDED = n_savages
 
         self.full_pot = Semaphore(0)
         self.empty_pot = Semaphore(0)
-        self.barrier1 = SimpleBarrier(N)
-        self.barrier2 = SimpleBarrier(N)
+        self.barrier1 = SimpleBarrier(n_savages)
+        self.barrier2 = SimpleBarrier(n_savages)
 
 
-def get_serving(id, shared):
-    print(f"divoch {id:02}: beriem si veceru")
+def get_serving(savage_id, shared):
+    print(f"divoch {savage_id:02}: beriem si veceru")
     shared.servings -= 1
 
 
-def eat_serving(id):
-    print(f"divoch {id:02}: hodujem")
+def eat_serving(savage_id):
+    print(f"divoch {savage_id:02}: hodujem")
     sleep(randint(3, 4) / TIME_DIVIDER)
 
 
@@ -54,20 +54,20 @@ def make_servings(shared):
     shared.servings = shared.SERVINGS_NEEDED
 
 
-def savage(id, shared):
+def savage(savage_id, shared):
     while True:
         shared.barrier1.wait(
-            "divoch {0:02}: prisiel som na veceru, uz nas je {1:02}", id, False, True)
+            "divoch {0:02}: prisiel som na veceru, uz nas je {1:02}", savage_id, False, True)
         shared.barrier2.wait(
-            "divoch {0:02}: uz sme vsetci, zaciname vecerat", id, print_last=True)
+            "divoch {0:02}: uz sme vsetci, zaciname vecerat", savage_id, print_last=True)
         shared.mutex.lock()
         if not shared.servings:
-            print(f"savage_{id}: budim kuchara")
+            print(f"savage_{savage_id}: budim kuchara")
             shared.empty_pot.signal()
             shared.full_pot.wait()
-        get_serving(id, shared)
+        get_serving(savage_id, shared)
         shared.mutex.unlock()
-        eat_serving(id)
+        eat_serving(savage_id)
 
 
 def cook(shared):
