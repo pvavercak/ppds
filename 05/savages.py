@@ -11,7 +11,17 @@ class SimpleBarrier:
         self.sem = Semaphore(0)
 
     def wait(self, print_str, savage_id, print_last=False, print_each=False):
-        pass
+        self.mutex.lock()
+        self.cnt += 1
+        if print_each:
+            print(print_str.format(savage_id, self.cnt))
+        if self.cnt == self.N:
+            self.cnt = 0
+            if print_last:
+                print(print_str.format(savage_id))
+            self.sem.signal(self.N)
+        self.mutex.unlock()
+        self.sem.wait()
 
 
 class Shared():
