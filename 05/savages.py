@@ -57,9 +57,13 @@ def make_servings(shared):
 def savage(savage_id, shared):
     while True:
         shared.barrier1.wait(
-            "divoch {0:02}: prisiel som na veceru, uz nas je {1:02}", savage_id, False, True)
+            "divoch {0:02}: prisiel som na veceru, uz nas je {1:02}",
+            savage_id,
+            print_each=True)
         shared.barrier2.wait(
-            "divoch {0:02}: uz sme vsetci, zaciname vecerat", savage_id, print_last=True)
+            "divoch {0:02}: uz sme vsetci, zaciname vecerat",
+            savage_id,
+            print_last=True)
         shared.mutex.lock()
         if not shared.servings:
             print(f"savage_{savage_id}: budim kuchara")
