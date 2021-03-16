@@ -2,6 +2,8 @@ from fei.ppds import Mutex, Semaphore, Thread, print
 from random import randint
 from time import sleep
 
+TIME_DIVIDER = 10
+
 
 class SimpleBarrier:
     def __init__(self, N):
@@ -33,6 +35,22 @@ class Shared():
         self.empty_pot = Semaphore(0)
         self.barrier1 = SimpleBarrier(N)
         self.barrier2 = SimpleBarrier(N)
+
+
+def get_serving(id, shared):
+    print(f"divoch {id:02}: beriem si veceru")
+    shared.servings -= 1
+
+
+def eat_serving(id):
+    print(f"divoch {id:02}: hodujem")
+    sleep(randint(3, 4) / TIME_DIVIDER)
+
+
+def make_servings(shared):
+    print("kuchar: varim")
+    sleep(randint(3, 6) / TIME_DIVIDER)
+    shared.servings = shared.SERVINGS_NEEDED
 
 
 def savage(shared):
