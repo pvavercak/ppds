@@ -26,6 +26,26 @@ class SimpleBarrier:
         self.sem.wait()
 
 
+class CookLS:
+    def __init__(self):
+        self.cnt = 0
+        self.mutex = Mutex()
+
+    def lock(self, shared):
+        self.mutex.lock()
+        self.cnt += 1
+        if self.cnt == 1:
+            shared.empty_pot.wait()
+        self.mutex.unlock()
+
+    def unlock(self, shared):
+        self.mutex.lock()
+        self.cnt -= 1
+        if self.cnt == 0:
+            shared.full_pot.signal()
+        self.mutex.unlock()
+
+
 class Shared():
     def __init__(self, n_savages=5, n_cooks=3):
         self.servings = 0
@@ -38,6 +58,7 @@ class Shared():
         self.barrier1 = SimpleBarrier(n_savages)
         self.barrier2 = SimpleBarrier(n_savages)
 
+        self.cookLS = CookLS()
         self.cookBarrier1 = SimpleBarrier(n_cooks)
         self.cookBarrier2 = SimpleBarrier(n_cooks)
 
