@@ -31,17 +31,19 @@ class CookLS:
         self.cnt = 0
         self.mutex = Mutex()
 
-    def lock(self, shared):
+    def lock(self, cook_id, shared):
         self.mutex.lock()
         self.cnt += 1
         if self.cnt == 1:
             shared.empty_pot.wait()
+            print(f"kuchar {cook_id:02}: spustam varenie")
         self.mutex.unlock()
 
-    def unlock(self, shared):
+    def unlock(self, cook_id, shared):
         self.mutex.lock()
         self.cnt -= 1
         if self.cnt == 0:
+            print(f"kuchar {cook_id:02}: varenie ukoncene")
             shared.full_pot.signal()
         self.mutex.unlock()
 
