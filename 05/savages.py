@@ -91,7 +91,7 @@ def savage(savage_id, shared):
             print_last=True)
         shared.mutex.lock()
         if not shared.servings:
-            print(f"savage_{savage_id}: budim kuchara")
+            print(f"divoch {savage_id}: budim kuchara")
             shared.empty_pot.signal()
             shared.full_pot.wait()
         get_serving(savage_id, shared)
