@@ -103,9 +103,15 @@ def savage(savage_id, shared):
 
 def cook(cook_id, shared):
     while True:
-        shared.empty_pot.wait()
-        make_servings(shared)
-        shared.full_pot.signal()
+        shared.cookLS.lock(cook_id, shared)
+        make_servings(cook_id, shared)
+        shared.cookBarrier1.wait(
+            "kuchar {0:02}: dovarili sme uz {1:02}",
+            cook_id,
+            print_each=True)
+        shared.cookLS.unlock(cook_id, shared)
+        shared.cookBarrier2.wait(
+            None, cook_id, print_each=False, print_last=False)
 
 
 def run():
