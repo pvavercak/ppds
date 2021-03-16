@@ -44,6 +44,7 @@ class CookLS:
         self.cnt -= 1
         if self.cnt == 0:
             print(f"kuchar {cook_id:02}: varenie ukoncene")
+            shared.servings = shared.SERVINGS_NEEDED
             shared.full_pot.signal()
         self.mutex.unlock()
 
@@ -78,7 +79,6 @@ def eat_serving(savage_id):
 def make_servings(cook_id, shared):
     print(f"kuchar {cook_id:02}: varim")
     sleep(randint(3, 6) / TIME_DIVIDER)
-    shared.servings = shared.SERVINGS_NEEDED
 
 
 def savage(savage_id, shared):
