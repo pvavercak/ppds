@@ -53,8 +53,20 @@ def make_servings(shared):
     shared.servings = shared.SERVINGS_NEEDED
 
 
-def savage(shared):
-    pass
+def savage(id, shared):
+    while True:
+        shared.barrier1.wait(
+            "divoch {0:02}: prisiel som na veceru, uz nas je {1:02}", id, False, True)
+        shared.barrier2.wait(
+            "divoch {0:02}: uz sme vsetci, zaciname vecerat", id, print_last=True)
+        shared.mutex.lock()
+        if not shared.servings:
+            print(f"savage_{id}: budim kuchara")
+            shared.empty_pot.signal()
+            shared.full_pot.wait()
+        get_serving(id, shared)
+        shared.mutex.unlock()
+        eat_serving(id)
 
 
 def cook(shared):
