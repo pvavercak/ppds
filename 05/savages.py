@@ -2,7 +2,7 @@ from fei.ppds import Mutex, Semaphore, Thread, print
 from random import randint
 from time import sleep
 
-TIME_DIVIDER = 10
+TIME_DIVIDER = 1
 
 
 class SimpleBarrier:
@@ -27,15 +27,19 @@ class SimpleBarrier:
 
 
 class Shared():
-    def __init__(self, n_savages=5):
+    def __init__(self, n_savages=5, n_cooks=3):
         self.servings = 0
         self.mutex = Mutex()
         self.SERVINGS_NEEDED = n_savages
 
         self.full_pot = Semaphore(0)
         self.empty_pot = Semaphore(0)
+
         self.barrier1 = SimpleBarrier(n_savages)
         self.barrier2 = SimpleBarrier(n_savages)
+
+        self.cookBarrier1 = SimpleBarrier(n_cooks)
+        self.cookBarrier2 = SimpleBarrier(n_cooks)
 
 
 def get_serving(savage_id, shared):
@@ -48,8 +52,8 @@ def eat_serving(savage_id):
     sleep(randint(3, 4) / TIME_DIVIDER)
 
 
-def make_servings(shared):
-    print("kuchar: varim")
+def make_servings(cook_id, shared):
+    print(f"kuchar {cook_id:02}: varim")
     sleep(randint(3, 6) / TIME_DIVIDER)
     shared.servings = shared.SERVINGS_NEEDED
 
@@ -74,7 +78,7 @@ def savage(savage_id, shared):
         eat_serving(savage_id)
 
 
-def cook(shared):
+def cook(cook_id, shared):
     while True:
         shared.empty_pot.wait()
         make_servings(shared)
@@ -83,13 +87,15 @@ def cook(shared):
 
 def run():
     N_SAVAGES = 5
+    N_COOKS = 2
 
-    shared = Shared(N_SAVAGES)
+    shared = Shared(N_SAVAGES, N_COOKS)
 
-    thread_pool = [Thread(savage, i, shared) for i in range(N_SAVAGES)]
-    thread_pool.append(Thread(cook, shared))
+    savages = [Thread(savage, i, shared) for i in range(N_SAVAGES)]
 
-    [th.join() for th in thread_pool]
+    cooks = [Thread(cook, i, shared) for i in range(N_COOKS)]
+
+    [th.join() for th in savages + cooks]
 
 
 run()
