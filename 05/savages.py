@@ -30,6 +30,7 @@ class Shared():
     def __init__(self, N=5):
         self.servings = 0
         self.mutex = Mutex()
+        self.SERVINGS_NEEDED = N
 
         self.full_pot = Semaphore(0)
         self.empty_pot = Semaphore(0)
@@ -70,7 +71,10 @@ def savage(id, shared):
 
 
 def cook(shared):
-    pass
+    while True:
+        shared.empty_pot.wait()
+        make_servings(shared)
+        shared.full_pot.signal()
 
 
 def run():
