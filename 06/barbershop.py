@@ -29,7 +29,14 @@ def customer(shared):
 
 
 def barber(shared):
-    pass
+    while True:
+        shared.customer.wait()
+        shared.barber.signal()
+
+        cut_hair(shared)
+
+        shared.customer_done.wait()
+        shared.barber_done.signal()
 
 
 def run_threads():
