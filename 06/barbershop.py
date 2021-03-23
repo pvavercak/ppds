@@ -16,6 +16,14 @@ class Shared():
         self.customerDone = Semaphore(0)
 
 
+def cut_hair():
+    sleep(randint(0,2)/10 + 0.5)
+
+
+def get_haircut():
+    sleep(randint(0, 3)/10 + 0.7)
+
+
 def customer(shared):
     pass
 
