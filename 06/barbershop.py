@@ -33,10 +33,12 @@ def barber(shared):
 
 
 def run_threads():
-    N_CUSTOMERS = 5
-    barbershop = Shared(N_CUSTOMERS)
+    N_CUSTOMERS = 3
+    CAP = 2
+    barbershop = Shared(CAP)
 
-    threads = [Thread(customer, barbershop) for _ in range(N_CUSTOMERS)]
+    threads = [Thread(customer, id + 1, barbershop)
+               for id in range(N_CUSTOMERS)]
     threads.append(Thread(barber, barbershop))
 
     [th.join() for th in threads]
