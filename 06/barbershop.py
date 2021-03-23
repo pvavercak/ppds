@@ -4,16 +4,16 @@ from random import randint
 
 
 class Shared():
-    def __init__(self, N):
-        self.N = N
+    def __init__(self, customer_capacity):
+        self.N = customer_capacity
         self.customers = 0
         self.mutex = Mutex()
 
         self.barber = Semaphore(0)
         self.customer = Semaphore(0)
 
-        self.barberDone = Semaphore(0)
-        self.customerDone = Semaphore(0)
+        self.barber_done = Semaphore(0)
+        self.customer_done = Semaphore(0)
 
 
 def cut_hair():
