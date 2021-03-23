@@ -32,6 +32,10 @@ def try_next_time():
     sleep(randint(2, 3) / TIME_DIVIDER)
 
 
+def grow_hair():
+    sleep(randint(2, 4) / TIME_DIVIDER)
+
+
 def customer(shared):
     while True:
         shared.mutex.lock()
@@ -52,6 +56,8 @@ def customer(shared):
             shared.mutex.lock()
             shared.customers -= 1
             shared.mutex.unlock()
+
+            grow_hair()
 
 
 def barber(shared):
