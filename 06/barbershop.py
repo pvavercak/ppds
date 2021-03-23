@@ -3,6 +3,10 @@ from time import sleep
 from random import randint
 
 
+TIME_OF_SERVICE = 1
+TIME_DIVIDER = 10
+
+
 class Shared():
     def __init__(self, customer_capacity):
         self.N = customer_capacity
@@ -17,15 +21,15 @@ class Shared():
 
 
 def cut_hair():
-    sleep(randint(0, 2)/10 + 0.5)
+    sleep(TIME_OF_SERVICE / TIME_DIVIDER)
 
 
 def get_haircut():
-    sleep(randint(0, 3)/10 + 0.7)
+    sleep(TIME_OF_SERVICE / TIME_DIVIDER)
 
 
 def try_next_time():
-    sleep(randint(2, 3) / 10)
+    sleep(randint(2, 3) / TIME_DIVIDER)
 
 
 def customer(shared):
