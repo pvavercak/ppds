@@ -17,15 +17,37 @@ class Shared():
 
 
 def cut_hair():
-    sleep(randint(0,2)/10 + 0.5)
+    sleep(randint(0, 2)/10 + 0.5)
 
 
 def get_haircut():
     sleep(randint(0, 3)/10 + 0.7)
 
 
+def try_next_time():
+    sleep(randint(2, 3) / 10)
+
+
 def customer(shared):
-    pass
+    while True:
+        shared.mutex.lock()
+        if shared.N == shared.customers:
+            shared.mutex.unlock()
+            try_next_time()
+        else:
+            shared.customers += 1
+            shared.mutex.unlock()
+            shared.customer.signal()
+            shared.barber.wait()
+
+            get_haircut()
+
+            shared.customer_done.signal()
+            shared.barber_done.wait()
+
+            shared.mutex.lock()
+            shared.customers -= 1
+            shared.mutex.unlock()
 
 
 def barber(shared):
