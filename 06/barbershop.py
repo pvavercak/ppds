@@ -20,35 +20,42 @@ class Shared():
         self.customer_done = Semaphore(0)
 
 
-def cut_hair():
+def cut_hair(n_of_customers):
+    print(
+        f"barber: striham zakaznika, pocet cakajucich {n_of_customers}")
     sleep(TIME_OF_SERVICE / TIME_DIVIDER)
 
 
-def get_haircut():
+def get_haircut(cid, noc):
+    print(
+        f"cust_{cid:02}: som v hlavnom kresle, pocet cakajucich je {noc:02}")
     sleep(TIME_OF_SERVICE / TIME_DIVIDER)
 
 
-def try_next_time():
+def try_next_time(cid):
+    print(f"cust_{cid:02}: kadernictvo je plne, pridem inokedy")
     sleep(randint(2, 3) / TIME_DIVIDER)
 
 
-def grow_hair():
+def grow_hair(cid):
+    print(f"cust_{cid:02}: cakam, kym mi dorastu vlasy")
     sleep(randint(2, 4) / TIME_DIVIDER)
 
 
-def customer(shared):
+def customer(cid, shared):
     while True:
         shared.mutex.lock()
         if shared.N == shared.customers:
             shared.mutex.unlock()
-            try_next_time()
+            try_next_time(cid)
         else:
             shared.customers += 1
+            print(f"cust_{cid:02}: posadil som sa do cakacieho kresla")
             shared.mutex.unlock()
             shared.customer.signal()
             shared.barber.wait()
 
-            get_haircut()
+            get_haircut(cid, shared.customers)
 
             shared.customer_done.signal()
             shared.barber_done.wait()
@@ -57,7 +64,7 @@ def customer(shared):
             shared.customers -= 1
             shared.mutex.unlock()
 
-            grow_hair()
+            grow_hair(cid)
 
 
 def barber(shared):
@@ -65,7 +72,7 @@ def barber(shared):
         shared.customer.wait()
         shared.barber.signal()
 
-        cut_hair(shared)
+        cut_hair(shared.customers - 1)
 
         shared.customer_done.wait()
         shared.barber_done.signal()
