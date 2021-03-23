@@ -5,7 +5,15 @@ from random import randint
 
 class Shared():
     def __init__(self, N):
-        pass
+        self.N = N
+        self.customers = 0
+        self.mutex = Mutex()
+
+        self.barber = Semaphore(0)
+        self.customer = Semaphore(0)
+
+        self.barberDone = Semaphore(0)
+        self.customerDone = Semaphore(0)
 
 
 def customer(shared):
