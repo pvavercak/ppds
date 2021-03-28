@@ -55,7 +55,7 @@ def customer(cid, shared):
             shared.customer.signal()
             shared.barber.wait()
 
-            get_haircut(cid, shared.customers)
+            get_haircut(cid, shared.customers - 1)
 
             shared.customer_done.signal()
             shared.barber_done.wait()
