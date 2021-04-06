@@ -23,7 +23,10 @@ def num_multiplier(multiplier, printer):
 
 
 def num_printer(multiplier):
+    n = 0
     try:
-        pass
+        while True:
+            n = (yield)
+            print(f"{n:02} = {multiplier} x {n // multiplier}")
     except GeneratorExit:
         pass
