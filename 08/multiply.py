@@ -2,9 +2,13 @@
 
 def dispatch(multipliers):
     try:
-        pass
+        while True:
+            num = (yield)
+            for multiplier in multipliers:
+                multiplier.send(num)
     except GeneratorExit:
-        pass
+        for multiplier in multipliers:
+            multiplier.close()
 
 
 def send_numbers(nums, dispatch_fnc):
