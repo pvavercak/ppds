@@ -34,3 +34,22 @@ def num_printer(multiplier):
             print(f"{n:02} = {multiplier} x {n // multiplier}")
     except GeneratorExit:
         pass
+
+
+numbers = [1, 2, 3, 4, 5, 6]
+multipliers = [6, 5, 4, 3, 2, 1]
+
+multipliers_list = list()
+
+for m in multipliers:
+    p = num_printer(m)
+    next(p)
+
+    nm = num_multiplier(m, p)
+    next(nm)
+    multipliers_list.append(nm)
+
+
+dispatcher = dispatch(multipliers_list)
+next(dispatcher)
+send_numbers(numbers, dispatcher)
