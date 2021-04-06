@@ -15,7 +15,9 @@ def send_numbers(nums, dispatch_fnc):
 
 def num_multiplier(multiplier, printer):
     try:
-        pass
+        while True:
+            num = (yield)
+            printer.send(num * multiplier)
     except GeneratorExit:
         pass
 
