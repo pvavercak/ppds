@@ -8,7 +8,9 @@ def dispatch(multipliers):
 
 
 def send_numbers(nums, dispatch_fnc):
-    pass
+    for num in nums:
+        dispatch_fnc.send(num)
+    dispatch_fnc.close()
 
 
 def num_multiplier(multiplier, printer):
