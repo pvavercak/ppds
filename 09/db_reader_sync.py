@@ -13,7 +13,13 @@ COUNTRIES = [
 
 
 def get_capital(task_name, work_queue, db_connection):
-    pass
+    while not work_queue.empty():
+        country = work_queue.get()
+        query = f"SELECT capital FROM CAPITALS WHERE country='{country}'"
+
+        result = db_connection.execute(query)
+        row = result.fetchone()
+        print(f"{task_name}: {country} - {row[0]}")
 
 
 def main():
