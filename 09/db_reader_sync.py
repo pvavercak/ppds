@@ -12,8 +12,11 @@ COUNTRIES = [
     "Taiwan"
 ]
 
+sum_times = 0
+
 
 def get_capital(task_name, work_queue, db_connection):
+    global sum_times
     while not work_queue.empty():
         country = work_queue.get()
         query = f"SELECT capital FROM CAPITALS WHERE country='{country}'"
@@ -26,6 +29,7 @@ def get_capital(task_name, work_queue, db_connection):
         diff = time.perf_counter_ns() - t
         print(f"{task_name}: {country} - {row[0]},"
               f" time elapsed {diff} [ns]")
+        sum_times += diff
         yield
 
 
@@ -53,7 +57,8 @@ def main():
                     diff = time.perf_counter_ns() - t
                     done = True
 
-        print(f"Application runtime {diff} [ns]")
+        print(f"{diff} [ns] vs {sum_times} [ns]"
+              " (app runtime vs sum of partial times)")
 
 
 if __name__ == "__main__":
